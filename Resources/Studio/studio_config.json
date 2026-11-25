@@ -1,0 +1,16 @@
+{
+  "work_root": "Work",
+  "image_python": "B:/models-ai-pipeline/image/venv/Scripts/python.exe",
+  "mesh_python": "B:/models-ai-pipeline/mesh3d/venv/Scripts/python.exe",
+  "comfy_root": "B:/models-ai-pipeline/mesh3d/ComfyUI",
+  "comfy_url": "http://127.0.0.1:8189",
+  "kimodo_root": "B:/Kimodo/kimodo.cpp",
+  "trellis_model": "/mnt/b/ez3D/Models/TRELLIS.2",
+  "engine": "B:/UE_5.6",
+  "project_roots": [],
+  "projects": [
+    "B:/Projects-Unreal/Prototipo/Prototipo.uproject",
+    "B:\\Projects-Unreal\\Prototipo\\Prototipo.uproject"
+  ],
+  "port": 8766
+}

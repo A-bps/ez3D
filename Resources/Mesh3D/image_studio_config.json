@@ -1,0 +1,16 @@
+{
+  "python": "B:/models-ai-pipeline/image/venv/Scripts/python.exe",
+  "comfy_root": "B:/models-ai-pipeline/image/ComfyUI",
+  "comfy_url": "http://127.0.0.1:8188",
+  "llm_url": "http://127.0.0.1:1234",
+  "model": "ez3d-image-planner",
+  "thinking_budget": 512,
+  "diffusion_model": "flux-2-klein-9b-Q6_K.gguf",
+  "text_encoder": "qwen_3_8b_fp8mixed.safetensors",
+  "vae": "flux2-vae.safetensors",
+  "resolution": 768,
+  "steps": 4,
+  "generation_timeout": 1200,
+  "turbo": false,
+  "backend": "flux2_klein"
+}

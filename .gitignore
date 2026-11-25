@@ -1,0 +1,9 @@
+Work/
+Runtime/
+*.zip
+*.log
+__pycache__/
+*.pyc
+.env
+hf-token
+Private/

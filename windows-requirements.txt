@@ -1,0 +1,12 @@
+PySide6>=6.7,<7
+Pillow>=10.4,<12
+requests>=2.32,<3
+numpy==1.26.4
+scipy>=1.14,<2
+trimesh>=4.5,<5
+open3d==0.18.0
+bpy==4.2.0
+pygltflib>=1.16,<2
+pyrender>=0.1.45,<1
+fast-simplification>=0.1.9,<1
+huggingface_hub>=0.30,<2
