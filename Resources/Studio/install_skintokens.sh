@@ -7,7 +7,7 @@ ENV=/opt/ez3d/skintokens-venv
 export CUDA_HOME=/usr/local/cuda-12.4
 export PATH="$CUDA_HOME/bin:$PATH"
 export MAX_JOBS=4
-export TORCH_CUDA_ARCH_LIST=8.6
+export TORCH_CUDA_ARCH_LIST="$(/usr/lib/wsl/lib/nvidia-smi --query-gpu=compute_cap --format=csv,noheader | head -1)"
 
 if [ ! -x "$ENV/bin/python" ]; then
   "$UV" venv --seed --python /opt/ez3d/venv/bin/python "$ENV"

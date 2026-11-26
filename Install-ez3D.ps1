@@ -46,7 +46,10 @@ try {
   if (!$gpu) { Stop-Install 'Driver NVIDIA não encontrado. Instale o driver NVIDIA atual e execute o instalador novamente.' }
   $vramText = & $gpu.Source --query-gpu=memory.total --format=csv,noheader,nounits 2>$null | Select-Object -First 1
   $vram = 0; [void][int]::TryParse(([string]$vramText).Trim(), [ref]$vram)
-  if ($vram -lt 23000) { Stop-Install "A GPU reporta $vram MiB. O TRELLIS.2 exige uma placa NVIDIA com aproximadamente 24 GB de VRAM para este fluxo." }
+  # Pico medido numa RTX 3090 (TRELLIS.2 Máxima, modo staged): ~8,1 GB. Abaixo de 10 GB pode faltar memória.
+  if ($vram -lt 10000) { Write-Host "Aviso: a GPU reporta $vram MiB. Recomendado 10 GB ou mais; a geração pode falhar por falta de memória." -ForegroundColor Yellow }
+  $cap = [string](& $gpu.Source --query-gpu=compute_cap --format=csv,noheader 2>$null | Select-Object -First 1)
+  if ([double]::TryParse($cap.Trim(), [Globalization.NumberStyles]::Float, [Globalization.CultureInfo]::InvariantCulture, [ref]$null) -and [double]::Parse($cap.Trim(), [Globalization.CultureInfo]::InvariantCulture) -ge 10) { Write-Host 'Aviso: placas RTX 50 (Blackwell) ainda não são suportadas por esta versão (PyTorch 2.6 / CUDA 12.4).' -ForegroundColor Yellow }
   $pythonEnv = Join-Path $runtime 'PythonEnv'
   $freshInstall = !(Test-Path $pythonEnv)
   $freeGB = [math]::Floor((Get-PSDrive -Name ([IO.Path]::GetPathRoot($env:LOCALAPPDATA).Substring(0,1))).Free / 1GB)

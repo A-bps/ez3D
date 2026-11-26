@@ -9,7 +9,7 @@ os.environ['ATTN_BACKEND']='sdpa'
 os.environ['SPARSE_ATTN_BACKEND']='xformers'
 os.environ['CUDA_HOME']='/usr/local/cuda-12.4'
 os.environ['PATH']='/usr/local/cuda-12.4/bin:'+os.environ.get('PATH','')
-os.environ['TORCH_CUDA_ARCH_LIST']='8.6'
+os.environ['TORCH_CUDA_ARCH_LIST']='%d.%d'%torch.cuda.get_device_capability()
 os.environ['MAX_JOBS']='4'
 os.environ['PYTORCH_CUDA_ALLOC_CONF']='expandable_segments:True'
 sys.path.insert(0,'/opt/ez3d/TRELLIS.2')
@@ -47,7 +47,7 @@ if cfg.get('gpu_mode')=='resident' and torch.cuda.mem_get_info()[0]>=20*1024**3:
     pipeline.models.pop('tex_slat_flow_model_512',None)
     pipeline.low_vram=False
 pipeline.cuda()
-phase('Pesos prontos · RTX 3090',stage=1)
+phase('Pesos prontos · '+torch.cuda.get_device_name().replace('NVIDIA GeForce ',''),stage=1)
 from trellis2.pipelines.samplers import flow_euler
 original_tqdm=flow_euler.tqdm
 shape_pass=0

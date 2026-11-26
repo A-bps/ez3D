@@ -4,7 +4,7 @@
 
 ## ⬇️ [Baixar o ez3D-Setup.exe (v0.1 beta)](https://github.com/A-bps/ez3D/releases/download/v0.1-beta/ez3D-Setup.exe)
 
-[Ver a página da versão e as notas](https://github.com/A-bps/ez3D/releases) · Precisa de placa **NVIDIA com 24 GB**.
+[Ver a página da versão e as notas](https://github.com/A-bps/ez3D/releases) · Recomendado: placa **NVIDIA com 10 GB ou mais** (RTX 20, 30 ou 40).
 
 > **Versão beta.** Testada em um único PC (Windows 11, RTX 3090). A geração de modelos foi testada; esqueleto, animação por texto e exportação para a Unreal ainda não foram validados. O instalador ainda não foi testado do zero em outro computador.
 
@@ -42,7 +42,7 @@ Recursos presentes no app, **ainda não validados** nesta versão:
 
 ## Requisitos
 - Windows 11.
-- Placa **NVIDIA com 24 GB** de memória de vídeo.
+- Placa **NVIDIA RTX série 20, 30 ou 40**, recomendado **10 GB ou mais** de memória de vídeo. O pico medido do TRELLIS.2 na qualidade Máxima foi de **8,1 GB**; o Hunyuan3D completo pede cerca de 16 GB. Placas RTX 50 ainda não são suportadas.
 - Cerca de **80 GB livres** (mais, se instalar o Hunyuan3D).
 - Conta gratuita no [Hugging Face](https://huggingface.co).
 - Permissão para instalar WSL/Ubuntu (pode exigir reiniciar o PC).

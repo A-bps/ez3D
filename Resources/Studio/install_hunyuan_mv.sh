@@ -7,7 +7,7 @@ ROOT="${1:-/opt/ez3d-hunyuan}"
 export CUDA_HOME=/usr/local/cuda-12.4
 export PATH="$CUDA_HOME/bin:$PATH"
 export LD_LIBRARY_PATH="$CUDA_HOME/lib64:/usr/lib/wsl/lib:${LD_LIBRARY_PATH:-}"
-export TORCH_CUDA_ARCH_LIST="${TORCH_CUDA_ARCH_LIST:-8.6}"
+export TORCH_CUDA_ARCH_LIST="${TORCH_CUDA_ARCH_LIST:-$(/usr/lib/wsl/lib/nvidia-smi --query-gpu=compute_cap --format=csv,noheader | head -1)}"
 
 export UV_PYTHON_INSTALL_DIR=/opt/ez3d/python
 apt-get install -y --no-install-recommends libopengl0 libegl1 libgl1 libglib2.0-0

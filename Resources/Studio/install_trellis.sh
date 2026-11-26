@@ -7,7 +7,7 @@ export PIP_NO_CACHE_DIR=1
 export CUDA_HOME=/usr/local/cuda-12.4
 export PATH="$CUDA_HOME/bin:$PATH"
 export LD_LIBRARY_PATH="$CUDA_HOME/lib64:/usr/lib/wsl/lib:${LD_LIBRARY_PATH:-}"
-export TORCH_CUDA_ARCH_LIST=8.6
+export TORCH_CUDA_ARCH_LIST="$(/usr/lib/wsl/lib/nvidia-smi --query-gpu=compute_cap --format=csv,noheader | head -1)"
 export MAX_JOBS=4
 mkdir -p /opt/ez3d /opt/ez3d/cache
 echo 'Preparing isolated Python and native build tools'

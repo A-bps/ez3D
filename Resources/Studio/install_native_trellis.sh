@@ -4,7 +4,7 @@ source /opt/ez3d/venv/bin/activate
 export CUDA_HOME=/usr/local/cuda-12.4
 export PATH="$CUDA_HOME/bin:$PATH"
 export LD_LIBRARY_PATH="$CUDA_HOME/lib64:/usr/lib/wsl/lib:${LD_LIBRARY_PATH:-}"
-export TORCH_CUDA_ARCH_LIST=8.6 MAX_JOBS=4 PIP_NO_CACHE_DIR=1
+export TORCH_CUDA_ARCH_LIST="$(/usr/lib/wsl/lib/nvidia-smi --query-gpu=compute_cap --format=csv,noheader | head -1)" MAX_JOBS=4 PIP_NO_CACHE_DIR=1
 export CPATH="$(find /opt/ez3d/venv/lib/python3.11/site-packages/nvidia -type d -name include | paste -sd:):${CPATH:-}"
 for entry in 'CuMesh https://github.com/JeffreyXiang/CuMesh.git' 'FlexGEMM https://github.com/JeffreyXiang/FlexGEMM.git' 'nvdiffrast https://github.com/NVlabs/nvdiffrast.git'; do
  read -r name url <<< "$entry"
