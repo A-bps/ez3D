@@ -81,7 +81,7 @@ def ask(config, system, text, image=None, history=None):
         except requests.RequestException:
             loaded = []
         if not loaded or not loaded[0]['config'].get('speculative_draft_mtp'):
-            subprocess.run(['powershell.exe', '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File',
+            subprocess.run(['powershell.exe', '-NoProfile', '-ExecutionPolicy', 'RemoteSigned', '-File',
                             str(Path(__file__).with_name('Start-ImagePlanner.ps1'))],
                            check=True, timeout=120, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
                            creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0))

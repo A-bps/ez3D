@@ -57,6 +57,19 @@ Recursos presentes no app, **ainda não validados** nesta versão:
 - Conta gratuita no [Hugging Face](https://huggingface.co).
 - Permissão para instalar WSL/Ubuntu (pode exigir reiniciar o PC).
 
+## O que o instalador faz no seu PC
+1. Mostra esta lista e só continua se você confirmar.
+2. Copia o ez3D para `%LOCALAPPDATA%\Programs\ez3D` e cria um atalho no menu Iniciar.
+3. Baixa o **Python 3.11.9** oficial ([pacote `python` no NuGet](https://www.nuget.org/packages/python/3.11.9)) e **só o descompacta** dentro da pasta do ez3D, conferindo o SHA-256. Não instala Python no Windows nem altera o PATH.
+4. Se faltar, instala o **Ubuntu 24.04 no WSL 2** (recurso da Microsoft), sem pedir usuário e senha. É a etapa que pede permissão de administrador. O ez3D usa o usuário `root` do Ubuntu.
+5. Dentro do Ubuntu, baixa programas e bibliotecas de IA (CUDA, PyTorch, TRELLIS.2 e outros).
+6. Pede o seu token **READ** do Hugging Face. Ao colar, nada aparece na tela: é normal.
+
+O Ubuntu fica fora da pasta do ez3D: para removê-lo, use `wsl --unregister Ubuntu-24.04` (apaga **tudo** que houver nesse Ubuntu).
+
+### Aviso do antivírus
+O `.exe` não tem assinatura digital (o certificado é pago) e executa um script PowerShell que baixa programas. Por isso o Windows ou o antivírus podem alertar. O script usa a política `RemoteSigned` (não usa `Bypass`) e não desativa o antivírus, mas o alerta ainda pode aparecer. **Não desligue o antivírus:** se preferir, leia o [código do instalador](Install-ez3D.ps1), confira o SHA-256 do arquivo na página da versão ou não instale.
+
 ## Como instalar
 1. Baixe o [`ez3D-Setup.exe`](https://github.com/A-bps/ez3D/releases/latest/download/ez3D-Setup.exe) e execute. Como o arquivo não tem assinatura digital, o Windows pode avisar que o editor é desconhecido.
 2. Quando o instalador pedir, **aceite os termos** destes dois modelos com a sua conta e entre no Hugging Face. O acesso ao modelo da Meta pode passar por análise.

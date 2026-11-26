@@ -13,7 +13,7 @@ if ($env:ez3D_STUDIO_SETUP_VISIBLE -ne '1') {
       Copy-Item -LiteralPath (Join-Path $setupDir $file) -Destination (Join-Path $stableSetupDir $file) -Force
     }
     $scriptPath = Join-Path $stableSetupDir 'Install-ez3D.ps1'
-    $argumentList = @('-NoLogo','-NoProfile','-ExecutionPolicy','Bypass','-WindowStyle','Normal','-File',('"{0}"' -f $scriptPath))
+    $argumentList = @('-NoLogo','-NoProfile','-ExecutionPolicy','RemoteSigned','-WindowStyle','Normal','-File',('"{0}"' -f $scriptPath))
     Start-Process -FilePath (Join-Path $PSHOME 'powershell.exe') -ArgumentList $argumentList -WorkingDirectory $stableSetupDir -WindowStyle Normal | Out-Null
   } catch {
     Add-Type -AssemblyName PresentationFramework
@@ -42,6 +42,17 @@ function Stop-Install([string]$Message) {
 try {
   Write-Host 'Instalador do ez3D' -ForegroundColor Cyan
   Write-Host 'Este pacote baixa código e modelos oficiais. Nenhum token é enviado junto no instalador.'
+  Write-Host @"
+
+O que este instalador faz:
+  1. Copia o ez3D para %LOCALAPPDATA%\Programs\ez3D e cria um atalho no menu Iniciar.
+  2. Baixa o Python 3.11.9 oficial (nuget.org) para dentro dessa pasta. Não instala Python no Windows.
+  3. Se faltar, instala o Ubuntu 24.04 no WSL 2 (recurso da Microsoft). Só aqui o Windows pede permissão de administrador.
+  4. Dentro do Ubuntu, baixa programas e bibliotecas de IA, como administrador (root) apenas do Ubuntu.
+  5. Pede seu token READ do Hugging Face e baixa os modelos de IA.
+Ele não desativa o antivírus nem muda a política de segurança do Windows. Código-fonte: https://github.com/A-bps/ez3D
+"@
+  if ((Read-Host 'Continuar a instalação? (s/N)') -notmatch '^[sS]') { Write-Host 'Instalação cancelada. Nada foi instalado.'; exit 0 }
   $gpu = Get-Command nvidia-smi.exe -ErrorAction SilentlyContinue
   if (!$gpu) { Stop-Install 'Driver NVIDIA não encontrado. Instale o driver NVIDIA atual e execute o instalador novamente.' }
   $vramText = & $gpu.Source --query-gpu=memory.total --format=csv,noheader,nounits 2>$null | Select-Object -First 1
@@ -62,21 +73,20 @@ try {
   Expand-Archive -LiteralPath $archive -DestinationPath $installRoot -Force
   Copy-Item -LiteralPath (Join-Path $setupDir 'Start-ez3D.bat') -Destination $installRoot -Force
 
-  $pythonExe = $null
-  try { $pythonExe = (& py.exe -3.11 -c 'import sys; print(sys.executable)' 2>$null | Select-Object -First 1).Trim() } catch {}
-  if (!$pythonExe -or !(Test-Path $pythonExe)) {
-    $winget = Get-Command winget.exe -ErrorAction SilentlyContinue
-    if (!$winget) { Stop-Install 'Instale Python 3.11 x64 pelo python.org ou habilite winget e execute o instalador novamente.' }
-    Write-Host 'Instalando Python 3.11 para este usuário…'
-    & $winget.Source install --id Python.Python.3.11 --exact --scope user --accept-package-agreements --accept-source-agreements
-    if ($LASTEXITCODE -ne 0) { Stop-Install 'A instalação do Python pelo winget falhou.' }
-    $machinePath = [Environment]::GetEnvironmentVariable('Path','Machine')
-    $userPath = [Environment]::GetEnvironmentVariable('Path','User')
-    $env:Path = $machinePath + ';' + $userPath
-    try { $pythonExe = (& py.exe -3.11 -c 'import sys; print(sys.executable)' 2>$null | Select-Object -First 1).Trim() } catch {}
-  }
-  if (!$pythonExe -or !(Test-Path $pythonExe)) { Stop-Install 'Python 3.11 não ficou disponível. Feche e reabra o terminal, depois rode o instalador novamente.' }
   $venvPython = Join-Path $runtime 'PythonEnv\Scripts\python.exe'
+  $pythonExe = Join-Path $runtime 'Python\python.exe'
+  if (!(Test-Path $venvPython) -and !(Test-Path $pythonExe)) {
+    # Pacote oficial "python" (Python Software Foundation) no NuGet: só é descompactado, sem instalar nada no Windows.
+    Write-Host 'Baixando o Python 3.11.9 para a pasta do ez3D (17 MB)…'
+    $pyZip = Join-Path $runtime 'python-3.11.9.zip'
+    $pyTemp = Join-Path $runtime 'PythonDownload'
+    [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+    Invoke-WebRequest -UseBasicParsing -Uri 'https://api.nuget.org/v3-flatcontainer/python/3.11.9/python.3.11.9.nupkg' -OutFile $pyZip
+    if ((Get-FileHash -Algorithm SHA256 -LiteralPath $pyZip).Hash -ne '9283876D58C017E0E846F95B490DA3BCA0FC0A6EE1134B2870677CFB7EEC3C67') { Remove-Item -LiteralPath $pyZip -Force; Stop-Install 'O arquivo do Python não confere com o original. Rode o instalador novamente.' }
+    Expand-Archive -LiteralPath $pyZip -DestinationPath $pyTemp -Force
+    Move-Item -LiteralPath (Join-Path $pyTemp 'tools') -Destination (Join-Path $runtime 'Python')
+    Remove-Item -LiteralPath $pyTemp,$pyZip -Recurse -Force
+  }
   if (!(Test-Path $venvPython)) {
     & $pythonExe -m venv (Join-Path $runtime 'PythonEnv')
     if ($LASTEXITCODE -ne 0) { Stop-Install 'Não foi possível criar o ambiente Python do Studio.' }
@@ -115,9 +125,20 @@ try {
   if (!$wsl) { Stop-Install 'WSL não está disponível. Ative e instale o WSL 2, reinicie o Windows e rode este instalador novamente.' }
   $distros = ((& $wsl.Source --list --quiet 2>$null) -join "`n") -replace "`0",''
   if ($distros -notmatch '(?m)^Ubuntu-24\.04\s*$') {
-    Write-Host 'Instalando Ubuntu 24.04 no WSL 2. O Windows pode pedir reinicialização…' -ForegroundColor Yellow
-    Start-Process -FilePath $wsl.Source -Verb RunAs -ArgumentList @('--install','-d','Ubuntu-24.04') -Wait
-    Write-Host 'Se o Windows pediu reinicialização ou o Ubuntu pediu para criar um usuário, conclua essa etapa e execute ez3D-Setup.exe novamente.' -ForegroundColor Yellow
+    Write-Host 'Instalando Ubuntu 24.04 no WSL 2, sem pedir usuário nem senha. O Windows pode pedir permissão e reinicialização…' -ForegroundColor Yellow
+    # --no-launch não abre o Ubuntu, então a tela de criar usuário não aparece. O ez3D usa o root do Ubuntu.
+    Start-Process -FilePath $wsl.Source -Verb RunAs -ArgumentList @('--install','-d','Ubuntu-24.04','--no-launch') -Wait
+    $distros = ((& $wsl.Source --list --quiet 2>$null) -join "`n") -replace "`0",''
+    if ($distros -notmatch '(?m)^Ubuntu-24\.04\s*$') {
+      # Versões do WSL em que o pacote é baixado, mas só é registrado pelo próprio lançador.
+      $launcher = Get-Command ubuntu2404.exe -ErrorAction SilentlyContinue
+      if ($launcher) { & $launcher.Source install --root }
+    }
+  }
+  $ready = $false
+  try { & $wsl.Source -d Ubuntu-24.04 -u root -- true 2>$null; $ready = ($LASTEXITCODE -eq 0) } catch {}
+  if (!$ready) {
+    Write-Host 'O Ubuntu ainda não está pronto. Reinicie o Windows e execute ez3D-Setup.exe novamente.' -ForegroundColor Yellow
     Read-Host 'Pressione Enter para fechar'
     exit 0
   }
@@ -132,6 +153,7 @@ try {
   Start-Process 'https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m'
   Start-Process 'https://huggingface.co/briaai/RMBG-2.0'
   Write-Host 'Aceite os termos desses dois modelos na conta da pessoa que usará o Studio. Depois cole no prompt o token READ dessa conta; ele fica apenas no perfil local.' -ForegroundColor Yellow
+  Write-Host 'Ao colar o token, NADA aparece na tela: é normal, não travou. Cole com o botão direito do mouse e pressione Enter.' -ForegroundColor Yellow
   $hf = Join-Path $runtime 'PythonEnv\Scripts\hf.exe'
   & $hf auth login
   if ($LASTEXITCODE -ne 0) { Stop-Install 'Login Hugging Face não foi concluído.' }
