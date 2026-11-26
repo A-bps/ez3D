@@ -2,7 +2,7 @@
 
 **Transforme imagens em modelos 3D no seu próprio computador.** Envie a imagem de um personagem ou objeto e receba um modelo `.glb` com textura, pronto para refinar no Blender ou levar para a Unreal Engine. Sem assinatura: depois que os modelos de IA são baixados, a geração roda na sua placa de vídeo.
 
-## ⬇️ [Baixar o ez3D-Setup.exe (v0.1 beta)](https://github.com/A-bps/ez3D/releases/download/v0.1-beta/ez3D-Setup.exe)
+## ⬇️ [Baixar o ez3D-Setup.exe (última versão)](https://github.com/A-bps/ez3D/releases/latest/download/ez3D-Setup.exe)
 
 [Ver a página da versão e as notas](https://github.com/A-bps/ez3D/releases) · Recomendado: placa **NVIDIA com 10 GB ou mais** (RTX 20, 30 ou 40).
 
@@ -48,7 +48,7 @@ Recursos presentes no app, **ainda não validados** nesta versão:
 - Permissão para instalar WSL/Ubuntu (pode exigir reiniciar o PC).
 
 ## Como instalar
-1. Baixe o [`ez3D-Setup.exe`](https://github.com/A-bps/ez3D/releases/download/v0.1-beta/ez3D-Setup.exe) e execute. Como o arquivo não tem assinatura digital, o Windows pode avisar que o editor é desconhecido.
+1. Baixe o [`ez3D-Setup.exe`](https://github.com/A-bps/ez3D/releases/latest/download/ez3D-Setup.exe) e execute. Como o arquivo não tem assinatura digital, o Windows pode avisar que o editor é desconhecido.
 2. Quando o instalador pedir, **aceite os termos** destes dois modelos com a sua conta e entre no Hugging Face. O acesso ao modelo da Meta pode passar por análise.
    - [`facebook/dinov3-vitl16-pretrain-lvd1689m`](https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m)
    - [`briaai/RMBG-2.0`](https://huggingface.co/briaai/RMBG-2.0)
