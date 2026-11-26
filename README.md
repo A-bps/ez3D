@@ -34,6 +34,16 @@ Duas gerações reais em uma **RTX 3090 (24 GB)**, com os modelos de IA já baix
 
 Limitação observada: com uma única imagem, o capuz da blusa da Vanellope virou um volume deformado nas costas.
 
+## Teste padrão (ajude a comparar placas)
+
+Use **sempre a mesma imagem** para os tempos serem comparáveis: [`benchmark/imagem-teste-explorador.png`](benchmark/imagem-teste-explorador.png) (personagem original, livre para teste).
+
+Configuração: gerador **TRELLIS.2 · 1 foto**, tipo **Personagem**, qualidade **Máxima**.
+
+Resultado de referência (RTX 3090 24 GB, Windows 11, 26/11/2026): **7 min 58 s** no total, 1.921.925 triângulos, pico de **5,9 GB** de memória de vídeo alocada, 161 W em média, máximo de 70 °C.
+
+Testou em outra placa? Abra uma [issue](https://github.com/A-bps/ez3D/issues) com: placa e memória, tempo total, se terminou ou travou, e o arquivo `trellis-request.performance.json` da pasta do trabalho (em `%LOCALAPPDATA%\ez3D\Work\jobs`).
+
 ## O que mais o app tem
 Recursos presentes no app, **ainda não validados** nesta versão:
 - Esqueleto automático para personagens (UniRig / SkinTokens).
